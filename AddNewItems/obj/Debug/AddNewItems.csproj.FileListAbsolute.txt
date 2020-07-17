@@ -8,3 +8,13 @@ C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.cspro
 C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.csproj.CoreCompileInputs.cache
 C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.exe
 C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.pdb
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\bin\Debug\AddNewItems.exe.config
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\bin\Debug\AddNewItems.exe
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\bin\Debug\AddNewItems.pdb
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.csprojAssemblyReference.cache
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.Form1.resources
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.Properties.Resources.resources
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.csproj.GenerateResource.cache
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.csproj.CoreCompileInputs.cache
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.exe
+C:\Users\Денис\Source\Repos\AddNewItems2\AddNewItems\obj\Debug\AddNewItems.pdb

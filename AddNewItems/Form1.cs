@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -89,24 +90,93 @@ namespace AddNewItems
 
             }
 
-            
 
+            List<string> firstThread = new List<string>();
+            List<string> secondThread = new List<string>();
+            List<string> Thread3 = new List<string>();
+            List<string> Thread4 = new List<string>();
 
-            IEnumerable<string[]> query3 =
-                   from current in imgUrls
-                   let currentFields = current.Split(',')
-                   select currentFields;
-            foreach(string[] a in query3)
+            List<List<string>> abc = new List<List<string>>();
+
+            abc = splitList(images, 500);
+
+            Thread[] threads = new Thread[100];
+            for (int i = 0; i < abc.Count; i++)
             {
-                foreach(string b in a)
-                    MessageBox.Show(b);
+
+                threads[i] = new Thread(new ParameterizedThreadStart(downloadThread));
+                threads[i].Start(abc[i]);
+
+
             }
+
+     
+
+
+            //foreach (string image in images)
+            //{
+            //    string[] arr = image.Split(',');
+            //    foreach (string s in arr)
+            //    {
+            //        if(s!="")
+            //            ImageDownload(s);
+            //    }
+
+
+            //}
+
+
+
             return;
             File.WriteAllLines(@"D:\XML_ADD\res.csv", resList, Encoding.Default);
             File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.Default);
 
         }
 
+
+        //public static List<List<string>> SplitList(List<string> numbers, int nSize = 5)
+        //{
+        //    var list = new List<List<string>>();
+
+        //    int splitter = list.Count / 5;
+
+
+
+        //    return list;
+        //}
+
+
+
+        public static List<List<string>> splitList(List<string> locations, int nSize)
+        {
+            var list = new List<List<string>>();
+
+            for (int i = 0; i < locations.Count; i += nSize)
+            {
+                list.Add(locations.GetRange(i, Math.Min(nSize, locations.Count - i)));
+            }
+
+            return list;
+        }
+
+        public static void downloadThread(object x)
+        {
+            List<string> images =  x as List<string>;
+            foreach (string image in images)
+            {
+                string[] arr = image.Split(',');
+                foreach (string s in arr)
+                {
+                    
+                    if(s.IndexOf("©")==-1)
+                        if (s != "")
+                            ImageDownload(s);
+                }
+
+
+            }
+
+        }
         public string pushList(ref List<string> images,string imageLink)
         {
             images.Add(imageLink);
@@ -131,19 +201,30 @@ namespace AddNewItems
 
 
         //загрузка изображения
-        public string ImageDownload(string ImageLink)
+        public static string ImageDownload(string ImageLink)
         {
-            using (WebClient webClient = new WebClient())
-            {
-                byte[] data = webClient.DownloadData(ImageLink);
-
-                using (MemoryStream mem = new MemoryStream(data))
+            if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
+                return "";
+                using (WebClient webClient = new WebClient())
                 {
-                    using (var yourImage = Image.FromStream(mem))
-                    { 
-                        yourImage.Save(@"D:\XML_ADD\"+ ImageLink.Substring(ImageLink.LastIndexOf('/')), ImageFormat.Png);
-                    }
+                    try
+                    {
+                        byte[] data = webClient.DownloadData(ImageLink);
+
+                        using (MemoryStream mem = new MemoryStream(data))
+                        {
+                            using (var yourImage = Image.FromStream(mem))
+                            {
+
+                                yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')), ImageFormat.Png);
+                            }
+                        }
                 }
+                    catch (Exception e)
+                    {
+                        
+                    }
+                    
 
             }
             return "";
