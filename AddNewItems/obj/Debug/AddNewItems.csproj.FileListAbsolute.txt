@@ -1,0 +1,10 @@
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\bin\Debug\AddNewItems.exe.config
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\bin\Debug\AddNewItems.exe
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\bin\Debug\AddNewItems.pdb
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.csprojAssemblyReference.cache
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.Form1.resources
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.Properties.Resources.resources
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.csproj.GenerateResource.cache
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.csproj.CoreCompileInputs.cache
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.exe
+C:\Users\goaway\source\repos\AddNewItems\AddNewItems\obj\Debug\AddNewItems.pdb
