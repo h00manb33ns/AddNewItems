@@ -7,16 +7,33 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using MySql.Data.MySqlClient;
 
 namespace AddNewItems
 {
     public partial class Form1 : Form
     {
+        MySqlConnection conn = DBUtils.GetDBConnection();
+        public static MySqlConnection
+            GetDBConnection(string host, int port, string database, string username, string password)
+        {
+            // Connection String.
+            String connString = "Server=" + host + ";Database=" + database
+                                + ";port=" + port + ";User Id=" + username + ";password=" + password;
+
+            MySqlConnection conn = new MySqlConnection(connString);
+
+            return conn;
+        }
+
+
+
         string hGifts_path_stock = @"D:\XML_ADD\1409_export.xml";
         public Form1()
         {
@@ -76,10 +93,11 @@ namespace AddNewItems
                 IEnumerable<string> query1 =
                     from current in input
                     let currentFields = current.Split(';')
-                    select "happygifts_" + currentFields[2] + ";" + currentFields[9] + ";" + currentFields[51] + ";" + currentFields[52] + ";"
+                    select "happygifts_" + currentFields[2] + ";" + currentFields[9] + ";" + currentFields[52] + ";" + currentFields[51] + ";"
                     + currentFields[10] + ";" + currentFields[11] + ";" + currentFields[49].Split(',').First() + ";" + currentFields[13].Split(',').First() + ";"
-                    + currentFields[54] + ";" + currentFields[23] + ";" + currentFields[85] + ";" + currentFields[3] + ";"
-                    + currentFields[4] + ";" + currentFields[134].Split(',').First() + ";" + pushList(ref imgUrls, currentFields[142]) + currentFields[142] +  ";RUB" + ";" + currentFields[57] + ";" + currentFields[47] + ";" + currentFields[24];
+                    + currentFields[54] + ";" + currentFields[23] + ";" + currentFields[85] + ";" 
+                    + "Временная" + ";" + pushList(ref imgUrls, currentFields[142]) 
+                    + currentFields[142] +  ";RUB" + ";" + currentFields[57] + ";" + currentFields[47] + ";" + currentFields[24];
                 resList.AddRange(query1.ToList());
                 // MessageBox.Show(query1.GetEnumerator().Current);
                 IEnumerable<string> query2 =
@@ -89,7 +107,7 @@ namespace AddNewItems
                 images.AddRange(query2.ToList());
 
             }
-
+            splitCommas(images);
 
             List<string> firstThread = new List<string>();
             List<string> secondThread = new List<string>();
@@ -97,9 +115,9 @@ namespace AddNewItems
             List<string> Thread4 = new List<string>();
 
             List<List<string>> abc = new List<List<string>>();
-            //File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.Default);
+            File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.UTF8);
             abc = splitList(images, 500);
-
+            
             Thread[] threads = new Thread[100];
             for (int i = 0; i < abc.Count; i++)
             {
@@ -110,7 +128,9 @@ namespace AddNewItems
 
             }
 
-     
+
+            
+
 
 
             //foreach (string image in images)
@@ -126,11 +146,37 @@ namespace AddNewItems
             //}
 
 
-
+            
+            
+            File.WriteAllLines(@"D:\XML_ADD\files\res.csv", resList, Encoding.UTF8);
             return;
-            File.WriteAllLines(@"D:\XML_ADD\res.csv", resList, Encoding.Default);
-            File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.Default);
+            File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.UTF8);
 
+        }
+        List<string> paths = new List<string>();
+        string[] stringSeparators = new string[] { ",h", ", "};
+        public void splitCommas(List<string> images)
+        {
+            
+            foreach (string image in images)
+            {
+                string temp = "";
+                string[] arr = image.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string s in arr)
+                {
+                    
+                    if (s.IndexOf("©") == -1)
+                        if (s != "")
+                        {
+                            temp += s.Substring(s.LastIndexOf('/'));
+                        }
+                }
+
+                temp = temp.Replace(".jpg,", ".jpg");
+                paths.Add(temp.Replace(".jpg",".jpg,"));
+
+            }
+            File.WriteAllLines(@"D:\XML_ADD\files\paths.csv", paths, Encoding.UTF8);
         }
 
 
@@ -161,14 +207,6 @@ namespace AddNewItems
         List<string> imgsss;
         IEnumerable<string> imgs;
 
-        public void splitCommas()
-        {
-            List<string> images = new List<string>;
-            foreach (string image in images)
-            {
-
-            }
-        }
         public static void downloadThread(object x)
         {
             
@@ -196,36 +234,61 @@ namespace AddNewItems
             return "";
         }
 
+        
+
         //загрузка изображения
         public static string ImageDownload(string ImageLink)
         {
-
+            List<string> paths = new List<string>();
             //if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
             //    return "";
             using (WebClient webClient = new WebClient())
+            {
+                try
                 {
-                    try
-                    {
-                        byte[] data = webClient.DownloadData(ImageLink);
+                    byte[] data = webClient.DownloadData(ImageLink);
 
-                        using (MemoryStream mem = new MemoryStream(data))
+                    using (MemoryStream mem = new MemoryStream(data))
+                    {
+                        using (var yourImage = Image.FromStream(mem))
                         {
-                            using (var yourImage = Image.FromStream(mem))
-                            {
-                                Task.Delay(100);
-                                yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')), ImageFormat.Png);
-
-                            }
+                            Task.Delay(100);
+                            //yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')),
+                             //   ImageFormat.Png);
+                            //paths.Add(ImageLink.Substring(ImageLink.LastIndexOf('/')));
+                                
                         }
-                }
-                    catch (Exception e)
-                    {
-                        
                     }
+                }
+                catch (Exception e)
+                {
+                        
+                }
                     
 
             }
             return "";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                richTextBox1.AppendText("Openning Connection ...\r\n");
+
+                conn.Open();
+
+                richTextBox1.AppendText("Connection successful!\r\n");
+            }
+            catch (Exception ex)
+            {
+                richTextBox1.AppendText("Error: " + ex.Message + "\r\n");
+            }
+
+            //Pass a query variable to a method and execute it  
+            // in the method. The query itself is unchanged.
+            //OutputQueryResults2(scoreQuery1, "Merge two spreadsheets:");
+
         }
     }
 }
