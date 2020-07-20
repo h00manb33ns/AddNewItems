@@ -97,7 +97,7 @@ namespace AddNewItems
             List<string> Thread4 = new List<string>();
 
             List<List<string>> abc = new List<List<string>>();
-
+            //File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.Default);
             abc = splitList(images, 500);
 
             Thread[] threads = new Thread[100];
@@ -158,19 +158,32 @@ namespace AddNewItems
 
             return list;
         }
+        List<string> imgsss;
+        IEnumerable<string> imgs;
 
+        public void splitCommas()
+        {
+            List<string> images = new List<string>;
+            foreach (string image in images)
+            {
+
+            }
+        }
         public static void downloadThread(object x)
         {
+            
             List<string> images =  x as List<string>;
             foreach (string image in images)
             {
                 string[] arr = image.Split(',');
                 foreach (string s in arr)
                 {
-                    
-                    if(s.IndexOf("©")==-1)
+
+                    if (s.IndexOf("©") == -1)
                         if (s != "")
+                        {
                             ImageDownload(s);
+                        }
                 }
 
 
@@ -183,29 +196,13 @@ namespace AddNewItems
             return "";
         }
 
-        public void SaveImage(string filename, ImageFormat format)
-        {
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead("https://happygifts.ru/catalog-images/4564fac3-e9f6-11e2-960d-18a9053c0de9/photo/4564fac3-e9f6-11e2-960d-18a9053c0de9.jpg");
-            Bitmap bitmap; bitmap = new Bitmap(stream);
-
-            if (bitmap != null)
-            {
-                bitmap.Save(filename, format);
-            }
-
-            stream.Flush();
-            stream.Close();
-            client.Dispose();
-        }
-
-
         //загрузка изображения
         public static string ImageDownload(string ImageLink)
         {
-            if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
-                return "";
-                using (WebClient webClient = new WebClient())
+
+            //if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
+            //    return "";
+            using (WebClient webClient = new WebClient())
                 {
                     try
                     {
@@ -215,8 +212,9 @@ namespace AddNewItems
                         {
                             using (var yourImage = Image.FromStream(mem))
                             {
-
+                                Task.Delay(100);
                                 yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')), ImageFormat.Png);
+
                             }
                         }
                 }
