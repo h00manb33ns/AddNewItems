@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -90,16 +91,27 @@ namespace AddNewItems
 
                 
 
+                //IEnumerable<string> query1 =
+                //    from current in input
+                //    let currentFields = current.Split(';')
+                //    select "happygifts_" + currentFields[2] + ";" + currentFields[9] + ";" + currentFields[52] + ";" + currentFields[51] + ";"
+                //    + currentFields[10] + ";" + currentFields[11] + ";" + currentFields[49].Split(',').First() + ";" + currentFields[13].Split(',').First() + ";"
+                //    + currentFields[54] + ";" + currentFields[23] + ";" + currentFields[85] + ";" 
+                //    + "Временная" + ";" + pushList(ref imgUrls, currentFields[142]) + insertData("happygifts_" + currentFields[2], currentFields[9], currentFields[51], 
+                //        currentFields[52], currentFields[10], currentFields[11], currentFields[49].Split(',').First(), currentFields[13].Split(',').First(),
+                //        currentFields[54],currentFields[23], currentFields[85], currentFields[14], pushList(ref imgUrls, currentFields[142]), "RUB", currentFields[57], currentFields[24]) +
+                //    currentFields[142] +  ";RUB" + ";" + currentFields[57] + ";" + currentFields[47] + ";" + currentFields[24];
+                //resList.AddRange(query1.ToList());
                 IEnumerable<string> query1 =
                     from current in input
                     let currentFields = current.Split(';')
-                    select "happygifts_" + currentFields[2] + ";" + currentFields[9] + ";" + currentFields[52] + ";" + currentFields[51] + ";"
-                    + currentFields[10] + ";" + currentFields[11] + ";" + currentFields[49].Split(',').First() + ";" + currentFields[13].Split(',').First() + ";"
-                    + currentFields[54] + ";" + currentFields[23] + ";" + currentFields[85] + ";" 
-                    + "Временная" + ";" + pushList(ref imgUrls, currentFields[142]) 
-                    + currentFields[142] +  ";RUB" + ";" + currentFields[57] + ";" + currentFields[47] + ";" + currentFields[24];
+                    select insertData("happygifts_" + currentFields[2], currentFields[9], currentFields[51],
+                        currentFields[52], currentFields[10], currentFields[11], currentFields[49].Split(',').First(),
+                        currentFields[13].Split(',').First(),
+                        currentFields[54], currentFields[23], currentFields[85], currentFields[14].Split(',').First(),
+                        pushList(ref imgUrls, currentFields[142]), "RUB", currentFields[57], currentFields[24]);
                 resList.AddRange(query1.ToList());
-                // MessageBox.Show(query1.GetEnumerator().Current);
+                //MessageBox.Show(query1.GetEnumerator().Current);
                 IEnumerable<string> query2 =
                    from current in input
                    let currentField = current.Split(';')
@@ -109,26 +121,21 @@ namespace AddNewItems
             }
             splitCommas(images);
 
-            List<string> firstThread = new List<string>();
-            List<string> secondThread = new List<string>();
-            List<string> Thread3 = new List<string>();
-            List<string> Thread4 = new List<string>();
-
             List<List<string>> abc = new List<List<string>>();
             File.WriteAllLines(@"D:\XML_ADD\images.csv", images, Encoding.UTF8);
-            abc = splitList(images, 500);
+            //abc = splitList(images, 500);
             
-            Thread[] threads = new Thread[100];
-            for (int i = 0; i < abc.Count; i++)
-            {
+            //Thread[] threads = new Thread[100];
+            //for (int i = 0; i < abc.Count; i++)
+            //{
 
-                threads[i] = new Thread(new ParameterizedThreadStart(downloadThread));
-                threads[i].Start(abc[i]);
-
-
-            }
+            //    threads[i] = new Thread(new ParameterizedThreadStart(downloadThread));
+            //    threads[i].Start(abc[i]);
 
 
+            //}
+
+            
             
 
 
@@ -191,7 +198,102 @@ namespace AddNewItems
         //    return list;
         //}
 
+        public string insertData(string xml_id1, string name1, string articul1, string description1, string weight1, string volume1, string color1, string material1, string pack_quan1, string price1, string quantity1, string appl_type1, string photo1, string valuta1, string pack_size1, string brand1)
+        {
+            MySqlConnection connection = DBUtils.GetDBConnection();
+            connection.Open();
+            try
+            {
+                // Команда Insert.
+                string sql = "Insert into happygifts (ID,XML_ID,NAME,ARTICUL,DESCRIPTION,WEIGHT,VOLUME,COLOR,MATERIAL,PACKAGE_QUANTITY,PRICE,QUANTITY,APPLICATION_TYPE,PHOTO,VALUTA,PACK_SIZE,BRAND)"
+                +" values(@id,@xml_id,@name,@articul,@description,@weight,@volume,@color,@material,@package_quantity,@price,@quantity,@application_type,@photo,@valuta,@pack_size,@brand)";
 
+                MySqlCommand cmd = connection.CreateCommand();
+                cmd.CommandText = sql;
+
+                MySqlParameter id = new MySqlParameter("@id", 0);
+                id.Value = 0;
+                cmd.Parameters.Add(id);
+
+                // Создать объект Parameter.
+                MySqlParameter xml_id = new MySqlParameter("@xml_id", xml_id1);
+                cmd.Parameters.Add(xml_id);
+
+                MySqlParameter name = new MySqlParameter("@name", name1);
+                cmd.Parameters.Add(name);
+
+                MySqlParameter articul = new MySqlParameter("@articul", articul1);
+                cmd.Parameters.Add(articul);
+
+                MySqlParameter description = new MySqlParameter("@description", description1);
+                cmd.Parameters.Add(description);
+                
+                MySqlParameter weight = new MySqlParameter("@weight", weight1);
+                cmd.Parameters.Add(weight);
+
+                MySqlParameter volume = new MySqlParameter("@volume", volume1);
+
+                cmd.Parameters.Add(volume);
+
+                MySqlParameter color = new MySqlParameter("@color", color1);
+
+                cmd.Parameters.Add(color);
+
+                MySqlParameter material = new MySqlParameter("@material", material1);
+                cmd.Parameters.Add(material);
+
+                MySqlParameter package_quantity = new MySqlParameter("@package_quantity", pack_quan1);
+                cmd.Parameters.Add(package_quantity);
+
+                MySqlParameter price = new MySqlParameter("@price", price1);
+                cmd.Parameters.Add(price);
+
+                MySqlParameter quantity = new MySqlParameter("@quantity", quantity1);
+                cmd.Parameters.Add(quantity);
+
+                MySqlParameter application_type = new MySqlParameter("@application_type", appl_type1);
+                cmd.Parameters.Add(application_type);
+
+                MySqlParameter photo = new MySqlParameter("@photo", photo1);
+                cmd.Parameters.Add(photo);
+
+                MySqlParameter valuta = new MySqlParameter("@valuta", valuta1);
+                cmd.Parameters.Add(valuta);
+
+                MySqlParameter pack_size = new MySqlParameter("@pack_size", pack_size1);
+                cmd.Parameters.Add(pack_size);
+
+                MySqlParameter brand = new MySqlParameter("@brand", brand1);
+                cmd.Parameters.Add(brand);
+                Application.DoEvents();
+
+                cmd.ExecuteNonQuery();
+
+                //richTextBox1.AppendText("Row Count affected = "+ rowCount +"\r\n");
+            }
+            catch (Exception e)
+            {
+                //richTextBox1.AppendText("Error: " + e + "\r\n");
+                //richTextBox1.AppendText(e.StackTrace + "\r\n");
+            }
+            finally
+            {
+                connection.Close();
+                connection.Dispose();
+                connection = null;
+            }
+
+
+            Console.Read();
+            return "";
+        }
+
+
+        public string GetData()
+        {
+            
+            return "";
+        }
 
         public static List<List<string>> splitList(List<string> locations, int nSize)
         {
@@ -204,30 +306,25 @@ namespace AddNewItems
 
             return list;
         }
-        List<string> imgsss;
-        IEnumerable<string> imgs;
 
-        public static void downloadThread(object x)
-        {
-            
-            List<string> images =  x as List<string>;
-            foreach (string image in images)
-            {
-                string[] arr = image.Split(',');
-                foreach (string s in arr)
-                {
+        //public static void downloadThread(object x)
+        //{
+        //    List<string> images =  x as List<string>;
+        //    foreach (string image in images)
+        //    {
+        //        string[] arr = image.Split(',');
+        //        foreach (string s in arr)
+        //        {
 
-                    if (s.IndexOf("©") == -1)
-                        if (s != "")
-                        {
-                            ImageDownload(s);
-                        }
-                }
+        //            if (s.IndexOf("©") == -1)
+        //                if (s != "")
+        //                {
+        //                    ImageDownload(s);
+        //                }
+        //        }
+        //    }
+        //}
 
-
-            }
-
-        }
         public string pushList(ref List<string> images,string imageLink)
         {
             images.Add(imageLink);
@@ -239,34 +336,34 @@ namespace AddNewItems
         //загрузка изображения
         public static string ImageDownload(string ImageLink)
         {
-            List<string> paths = new List<string>();
-            //if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
-            //    return "";
-            using (WebClient webClient = new WebClient())
-            {
-                try
-                {
-                    byte[] data = webClient.DownloadData(ImageLink);
+            //List<string> paths = new List<string>();
+            ////if (File.Exists(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/'))))
+            ////    return "";
+            //using (WebClient webClient = new WebClient())
+            //{
+            //    try
+            //    {
+            //        byte[] data = webClient.DownloadData(ImageLink);
 
-                    using (MemoryStream mem = new MemoryStream(data))
-                    {
-                        using (var yourImage = Image.FromStream(mem))
-                        {
-                            Task.Delay(100);
-                            //yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')),
-                             //   ImageFormat.Png);
-                            //paths.Add(ImageLink.Substring(ImageLink.LastIndexOf('/')));
+            //        using (MemoryStream mem = new MemoryStream(data))
+            //        {
+            //            using (var yourImage = Image.FromStream(mem))
+            //            {
+            //                Task.Delay(100);
+            //                //yourImage.Save(@"D:\XML_ADD\uploads\" + ImageLink.Substring(ImageLink.LastIndexOf('/')),
+            //                 //   ImageFormat.Png);
+            //                //paths.Add(ImageLink.Substring(ImageLink.LastIndexOf('/')));
                                 
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
+            //            }
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
                         
-                }
+            //    }
                     
 
-            }
+            //}
             return "";
         }
 
@@ -288,7 +385,7 @@ namespace AddNewItems
             //Pass a query variable to a method and execute it  
             // in the method. The query itself is unchanged.
             //OutputQueryResults2(scoreQuery1, "Merge two spreadsheets:");
-
+            //insertData();
         }
     }
 }
